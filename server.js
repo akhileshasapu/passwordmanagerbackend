@@ -1,13 +1,14 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import express from 'express'
+
+import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import authroute from './routes/auth.js'
+
+import authroute from './routes/auth.js';
 import Manageroute from './routes/manage.js';
 
-const app = express()
-const cors = require("cors");
+const app = express();
 
 // Only allow your Vercel frontend
 const allowedOrigins = ['https://pass-o-ppasswordmanager.vercel.app'];
@@ -20,20 +21,24 @@ app.use(cors({
       callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true,
+  credentials: true, // If you're sending cookies or authorization headers
 }));
 
-app.use(express.json())
+// Allow preflight (OPTIONS) requests
+app.options("*", cors());
+
+app.use(express.json());
+
 mongoose.connect(process.env.mongo_url)
-.then(()=>{
-    console.log("database connected")
-})
-.catch((err)=>{
- console.log("error is ", err);
-})
+  .then(() => {
+    console.log("Database connected");
+  })
+  .catch((err) => {
+    console.log("Error is ", err);
+  });
 
-app.use("/api/auth",authroute)
-app.use("/api/",Manageroute)
+app.use("/api/auth", authroute);
+app.use("/api", Manageroute);
 
-const port = 3000;
-app.listen(port,()=> console.log(`server listening at ${port}`))
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Server listening at ${port}`));
