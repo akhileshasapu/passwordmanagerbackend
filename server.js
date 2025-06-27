@@ -7,10 +7,11 @@ import authroute from './routes/auth.js'
 import Manageroute from './routes/manage.js';
 
 const app = express()
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:3000"
-];
+const cors = require("cors");
+
+// Only allow your Vercel frontend
+const allowedOrigins = ['https://pass-o-ppasswordmanager.vercel.app'];
+
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
